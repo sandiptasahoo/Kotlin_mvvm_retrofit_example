@@ -1,10 +1,9 @@
 package com.example.mydagger2demokotlin.ui
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.app.Activity
 import android.os.Bundle
 import android.widget.Button
-import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,34 +14,37 @@ import com.example.mydagger2demokotlin.viewmodel.GitHubReposViewModel
 import com.example.mydagger2demokotlin.viewmodel.MyViewModel
 import com.example.mydagger2demokotlin.viewmodel.ViewModelFactory
 
-class MainActivity : AppCompatActivity() {
+class UserGitHubRepoList : AppCompatActivity() {
 
+    private var linearLayoutManager = LinearLayoutManager(this)
+    private lateinit var viewModel : GitHubReposViewModel
+    private lateinit var recyclerView: RecyclerView
     private lateinit var btn : Button
-    private lateinit var viewModel : MyViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        /*Singleton Example
-        * If you rotate the screen or will go to some other app and come back
-        * Same memory location will print
-        * */
-        print("DEBUG: ${ExampleSingleton.singletonUser.hashCode()}") //it will print the memory location of object
+        recyclerView = findViewById(R.id.recycler)
         val factory = ViewModelFactory()
-        viewModel = ViewModelProviders.of(this, factory).get(MyViewModel ::class.java)
-
+        viewModel = ViewModelProviders.of(this, factory).get(GitHubReposViewModel ::class.java)
         btn = findViewById(R.id.button)
         btn.setOnClickListener{
-            val intent = Intent(this, UserGitHubRepoList::class.java)
-            startActivity(intent)
+            //viewModel.getMovieList()
         }
+        initializeAdapter()
+        viewModel.setUserId("sandiptasahoo")
+    }
 
-        /*viewModel.user.observe(this, Observer {
-            println("DEBUG: $it");
-        })*/
-        //viewModel.setUserId("1")
+    private fun initializeAdapter() {
+        recyclerView.layoutManager = linearLayoutManager
+        observeRepoData()
+    }
 
+    private fun observeRepoData(){
+        viewModel.repo.observe(this, Observer {
+            recyclerView.adapter = RecyclerRepoAdapter(it)
+        })
     }
 
     override fun onDestroy() {

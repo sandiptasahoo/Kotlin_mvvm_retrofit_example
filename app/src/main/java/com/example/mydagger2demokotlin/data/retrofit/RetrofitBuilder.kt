@@ -19,7 +19,7 @@ class RetrofitBuilder {
 }*/
 
 object RetrofitBuilder {
-    val BASE_URL = "https://open-api.xyz/"
+    val BASE_URL = "https://api.github.com/"
 
     val retrofitBuilder : Retrofit.Builder by lazy {
         Retrofit.Builder()
